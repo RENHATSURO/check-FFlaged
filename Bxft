@@ -2,10 +2,9 @@
 
 local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
-local UserInputService = game:GetService("UserInputService")
-
 local player = Players.LocalPlayer
 local placeId = game.PlaceId
+local UIS = game:GetService("UserInputService")
 
 --=== Création du GUI ===--
 
@@ -23,13 +22,18 @@ frame.Active = true
 frame.Draggable = true
 frame.Parent = gui
 
--- arrondir
 local corner = Instance.new("UICorner")
 corner.CornerRadius = UDim.new(0, 12)
 corner.Parent = frame
 
+local label = Instance.new("TextLabel")
+label.Size = UDim2.new(1, 0, 1, 0)
+label.BackgroundTransparency = 1
+label.Font = Enum.Font.GothamBold
+label.TextScaled = true
+label.Parent = frame
 
---=== Texte + couleur selon PlaceId ===--
+--=== Définition du texte selon PlaceId ===--
 
 if placeId == 79091703265657 or placeId == 100117331123089 then
     label.Text = "redz"
@@ -44,59 +48,32 @@ else
     label.TextColor3 = Color3.fromRGB(150, 0, 200)
 end
 
---=== Animation d’apparition ===--
+--=== Petite animation d’apparition ===--
 
 frame.BackgroundTransparency = 1
 label.TextTransparency = 1
 frame.Size = UDim2.new(0, 120, 0, 40)
 
-local appearTweenInfo = TweenInfo.new(0.6, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+local tweenInfo = TweenInfo.new(0.6, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
 
-TweenService:Create(frame, appearTweenInfo, {
+TweenService:Create(frame, tweenInfo, {
     BackgroundTransparency = 0.5,
     Size = UDim2.new(0, 150, 0, 50)
 }):Play()
 
-TweenService:Create(label, appearTweenInfo, {
+TweenService:Create(label, tweenInfo, {
     TextTransparency = 0
 }):Play()
 
---=== Pulsation au clic ===--
+--=== EFFET HOVER (SURVOL SOURIS) ===--
 
-local function pulse()
-    local shrink = TweenService:Create(frame, TweenInfo.new(0.1, Enum.EasingStyle.Quad), {
-        Size = UDim2.new(0, 140, 0, 45)
-    })
-    local grow = TweenService:Create(frame, TweenInfo.new(0.1, Enum.EasingStyle.Quad), {
-        Size = UDim2.new(0, 150, 0, 50)
-    })
-
-    shrink:Play()
-    shrink.Completed:Connect(function()
-        grow:Play()
-    end)
-end
-
-frame.InputBegan:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 then
-        pulse()
-    end
-end)
-
---=== Effet de hover (survol) ===--
-
-local hoverIn = TweenService:Create(frame, TweenInfo.new(0.15, Enum.EasingStyle.Quad), {
-    BackgroundTransparency = 0.7
-})
-
-local hoverOut = TweenService:Create(frame, TweenInfo.new(0.15, Enum.EasingStyle.Quad), {
-    BackgroundTransparency = 0.5
-})
+local hoverIn = TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+local hoverOut = TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
 
 frame.MouseEnter:Connect(function()
-    hoverIn:Play()
+    TweenService:Create(frame, hoverIn, {BackgroundTransparency = 0}):Play()
 end)
 
 frame.MouseLeave:Connect(function()
-    hoverOut:Play()
+    TweenService:Create(frame, hoverOut, {BackgroundTransparency = 0.5}):Play()
 end)
